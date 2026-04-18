@@ -1,6 +1,6 @@
 /**
  * MBOYI INDIVA - Interactive Script
- * Handles: Navigation, Passcode Lock, Animations, Accordions
+ * Handles: Navigation, Passcode Lock, Animations, Accordions, Mobile Menu, Scroll Button
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,28 +13,75 @@ document.addEventListener('DOMContentLoaded', () => {
     initServiceAccordion();
     initCollectionTabs();
     initParallax();
+    initMobileMenu();
+    initScrollToTop();
     
     console.log('Mboyi Indiva universe initialized');
 });
 
-// 1. Initial Curtain Reveal
-function initCurtainReveal() {
-    const curtain = document.querySelector('.curtain-overlay');
+// ====================
+// MOBILE MENU
+// ====================
+function initMobileMenu() {
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
     
-    // Wait for fonts and basic load
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            curtain.classList.add('revealed');
-            
-            // Remove from DOM after animation
-            setTimeout(() => {
-                curtain.style.display = 'none';
-            }, 1200);
-        }, 1500); // Dramatic pause
+    if (!menuToggle || !mobileMenu) return;
+    
+    menuToggle.addEventListener('click', () => {
+        menuToggle.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+        document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+    });
+    
+    // Close menu when link clicked
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            menuToggle.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            document.body.style.overflow = '';
+        });
     });
 }
 
-// 2. Navigation Scroll Effect
+// ====================
+// SCROLL TO TOP
+// ====================
+function initScrollToTop() {
+    const scrollToTopBtn = document.getElementById('scrollToTop');
+    
+    if (!scrollToTopBtn) return;
+    
+    // Show/hide button based on scroll
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 500) {
+            scrollToTopBtn.classList.add('visible');
+        } else {
+            scrollToTopBtn.classList.remove('visible');
+        }
+    });
+    
+    // Click handler (smooth scroll)
+    scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}
+
+// Make scrollToTop available globally
+window.scrollToTop = function() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+};
+
+// ====================
+// NAVIGATION SCROLL EFFECT
+// ====================
 function initNavigation() {
     const nav = document.querySelector('.main-nav');
     let lastScroll = 0;
@@ -49,7 +96,7 @@ function initNavigation() {
             nav.classList.remove('scrolled');
         }
         
-        // Hide/show on scroll direction (optional luxury touch)
+        // Hide/show on scroll direction
         if (currentScroll > lastScroll && currentScroll > 200) {
             nav.style.transform = 'translateY(-100%)';
         } else {
@@ -62,66 +109,26 @@ function initNavigation() {
     // Smooth scroll for nav links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            const href = this.getAttribute('href');
+            if (href.startsWith('#') && href.length > 1) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             }
         });
     });
 }
 
 // ====================
-// SCROLL TO TOP
+// PASSCODE LOCK (Updated with Enter/Clear)
 // ====================
-function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
-
-// Show/hide scroll to top button
-const scrollToTopBtn = document.getElementById('scrollToTop');
-
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 500) {
-        scrollToTopBtn.classList.add('visible');
-    } else {
-        scrollToTopBtn.classList.remove('visible');
-    }
-});
-
-
-// 3. Scroll Reveal Animations
-function initScrollReveal() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-                
-                // Optional: unobserve after reveal
-                // observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-    
-    document.querySelectorAll('.reveal').forEach(el => {
-        observer.observe(el);
-    });
-}
-
-// 4. Mystery Access Passcode Lock
 function initPasscodeLock() {
-    const correctPasscode = '1235'; // The code from the brand image
+    const correctPasscode = '1235';
     let currentInput = '';
     
     const digitBoxes = document.querySelectorAll('.digit-box');
@@ -130,19 +137,33 @@ function initPasscodeLock() {
     const unlockedContent = document.querySelector('.unlocked-content');
     const statusEl = document.getElementById('lock-status');
     
-    // Keypad input
+    if (!keys.length) return;
+    
     keys.forEach(key => {
         key.addEventListener('click', () => {
             const keyValue = key.getAttribute('data-key');
             
+            if (keyValue === 'clear') {
+                currentInput = '';
+                updateDisplay();
+                statusEl.textContent = '';
+                return;
+            }
+            
+            if (keyValue === 'enter') {
+                if (currentInput.length === 4) {
+                    validatePasscode();
+                } else {
+                    statusEl.textContent = 'Enter 4 digits';
+                    statusEl.style.color = '#ff4444';
+                }
+                return;
+            }
+            
             if (currentInput.length < 4) {
                 currentInput += keyValue;
                 updateDisplay();
-                
-                // Check if complete
-                if (currentInput.length === 4) {
-                    validatePasscode();
-                }
+                statusEl.textContent = '';
             }
         });
     });
@@ -161,7 +182,6 @@ function initPasscodeLock() {
     
     function validatePasscode() {
         if (currentInput === correctPasscode) {
-            // Success
             statusEl.textContent = 'Access Granted';
             statusEl.style.color = '#D4AF37';
             
@@ -169,7 +189,6 @@ function initPasscodeLock() {
                 unlock();
             }, 500);
         } else {
-            // Failure
             statusEl.textContent = 'Access Denied';
             statusEl.style.color = '#ff4444';
             
@@ -189,13 +208,10 @@ function initPasscodeLock() {
     function unlock() {
         lockInterface.style.display = 'none';
         unlockedContent.classList.add('active');
-        
-        // Trigger confetti or subtle gold particle effect here if desired
         createUnlockEffect();
     }
     
     function createUnlockEffect() {
-        // Simple gold flash effect
         const flash = document.createElement('div');
         flash.style.cssText = `
             position: fixed;
@@ -219,20 +235,55 @@ function initPasscodeLock() {
     }
 }
 
-// 5. Service Accordion (Transport section)
+// ... [Keep other existing functions: Curtain Reveal, Scroll Reveal, Service Accordion, Collection Tabs, Parallax] ...
+
+// 1. Initial Curtain Reveal
+function initCurtainReveal() {
+    const curtain = document.querySelector('.curtain-overlay');
+    if (!curtain) return;
+    
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            curtain.classList.add('revealed');
+            setTimeout(() => {
+                curtain.style.display = 'none';
+            }, 1200);
+        }, 1500);
+    });
+}
+
+// 3. Scroll Reveal Animations
+function initScrollReveal() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, observerOptions);
+    
+    document.querySelectorAll('.reveal').forEach(el => {
+        observer.observe(el);
+    });
+}
+
+// 5. Service Accordion
 function initServiceAccordion() {
     const serviceItems = document.querySelectorAll('.service-item');
     
     serviceItems.forEach(item => {
         const header = item.querySelector('.service-header');
+        if (!header) return;
         
         header.addEventListener('click', () => {
-            // Close others
             serviceItems.forEach(other => {
                 if (other !== item) other.classList.remove('active');
             });
-            
-            // Toggle current
             item.classList.toggle('active');
         });
     });
@@ -244,18 +295,16 @@ function initCollectionTabs() {
     
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            // Remove active from all
             tabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
             
-            // Here you would typically switch content
-            // For this demo, we'll just animate the grid
             const grid = document.querySelector('.collection-grid');
-            grid.style.opacity = '0';
-            
-            setTimeout(() => {
-                grid.style.opacity = '1';
-            }, 300);
+            if (grid) {
+                grid.style.opacity = '0';
+                setTimeout(() => {
+                    grid.style.opacity = '1';
+                }, 300);
+            }
         });
     });
 }
@@ -265,58 +314,14 @@ function initParallax() {
     window.addEventListener('scroll', () => {
         const scrolled = window.pageYOffset;
         
-        // Hero background parallax
         const heroBg = document.querySelector('.hero-bg');
         if (heroBg) {
             heroBg.style.transform = `translateY(${scrolled * 0.5}px)`;
         }
         
-        // Light leak movement
         const lightLeak = document.querySelector('.light-leak');
         if (lightLeak) {
             lightLeak.style.transform = `translate(${scrolled * 0.2}px, ${scrolled * 0.1}px)`;
         }
     });
 }
-
-// Utility: Mouse trail effect for luxury feel (optional)
-document.addEventListener('mousemove', (e) => {
-    // Could add a subtle gold glow that follows mouse
-    // But keeping it minimal as per brand philosophy
-});
-
-// Utility: Random glitch text effect for mystery elements
-function glitchText(element) {
-    const originalText = element.textContent;
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    let iterations = 0;
-    
-    const interval = setInterval(() => {
-        element.textContent = originalText
-            .split('')
-            .map((letter, index) => {
-                if (index < iterations) {
-                    return originalText[index];
-                }
-                return chars[Math.floor(Math.random() * chars.length)];
-            })
-            .join('');
-        
-        if (iterations >= originalText.length) {
-            clearInterval(interval);
-        }
-        
-        iterations += 1/3;
-    }, 30);
-}
-
-// Initialize glitch on hover for mystery elements
-document.querySelectorAll('.mystery-link').forEach(link => {
-    link.addEventListener('mouseenter', function() {
-        const originalText = this.textContent;
-        glitchText(this);
-        setTimeout(() => {
-            this.textContent = originalText;
-        }, 1000);
-    });
-});
