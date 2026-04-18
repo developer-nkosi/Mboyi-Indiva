@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct Line | MBOYI INDIVA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .contact-container {
+            min-height: 100vh;
+            padding-top: 6rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .contact-visual {
+            position: relative;
+            background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1000&q=80&sat=-100');
+            background-size: cover;
+            background-position: center;
+            min-height: 600px;
+        }
+        
+        .contact-visual::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, transparent, #050505);
+        }
+        
+        .contact-form-container {
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 600px;
+        }
+        
+        .form-header {
+            margin-bottom: 3rem;
+        }
+        
+        .form-header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+        
+        .form-header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .form-control {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.8rem 0;
+            color: #fff;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+        
+        .form-control:focus {
+            border-bottom-color: #D4AF37;
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right center;
+            padding-right: 20px;
+        }
+        
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: transparent;
+            border: 1px solid #D4AF37;
+            color: #D4AF37;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(212, 175, 55, 0.1);
+            transition: left 0.4s ease;
+        }
+        
+        .submit-btn:hover::before {
+            left: 0;
+        }
+        
+        .submit-btn:hover {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+        
+        .alt-contact {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .alt-contact h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: #D4AF37;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+        }
+        
+        .alt-contact p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+        
+        @media (max-width: 968px) {
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+            .contact-visual {
+                min-height: 300px;
+            }
+            .contact-form-container {
+                padding: 2rem;
+            }
+        }
+        
+        .form-success {
+            display: none;
+            text-align: center;
+            padding: 3rem 0;
+        }
+        
+        .form-success.active {
+            display: block;
+        }
+        
+        .success-icon {
+            font-size: 3rem;
+            color: #D4AF37;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="main-nav scrolled">
+        <div class="nav-container">
+            <a href="indiva.html" class="logo">
+                <span class="logo-icon">M</span>
+                <span class="logo-text">MBOYI INDIVA</span>
+            </a>
+            <div class="nav-links">
+                <a href="indiva.html" class="nav-link">Return to Universe</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="contact-container">
+        <div class="contact-visual"></div>
+        
+        <div class="contact-form-container">
+            <div class="form-header">
+                <span class="section-label">Communique</span>
+                <h1>The Direct <span class="indiva-gold">Line</span></h1>
+                <p>This is not a conventional customer service portal. Use this channel for serious inquiries regarding acquisition, collaboration, or entry into the restricted zones of our universe.</p>
+            </div>
+
+            <form id="contactForm" class="contact-form">
+                <div class="form-group">
+                    <label>Identity</label>
+                    <input type="text" class="form-control" placeholder="Your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Digital Address</label>
+                    <input type="email" class="form-control" placeholder="your@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Nature of Inquiry</label>
+                    <select class="form-control" required>
+                        <option value="" disabled selected>Select category...</option>
+                        <option value="acquisition">Product Acquisition</option>
+                        <option value="concierge">Private Concierge Services</option>
+                        <option value="collab">Strategic Collaboration</option>
+                        <option value="mystery">Mystery Access Issues</option>
+                        <option value="other">Other (Specify Below)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea class="form-control" placeholder="Compose your message with precision. Vague inquiries receive no response." required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Transmit Message</button>
+            </form>
+
+            <div class="form-success" id="formSuccess">
+                <div class="success-icon">◈</div>
+                <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 1rem;">Transmission Received</h2>
+                <p style="color: rgba(255,255,255,0.6);">Your communique has entered our system. We will observe it, consider it, and respond if merited. Time is relative in our universe.</p>
+                <a href="indiva.html" style="display: inline-block; margin-top: 2rem; color: #D4AF37; text-decoration: none; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;">Return to Construct</a>
+            </div>
+
+            <div class="alt-contact">
+                <h3>Physical Correspondence</h3>
+                <p>MBOYI INDIVA Headquarters<br>
+                Private Reserve, Malawi<br>
+                [Coordinates Redacted]</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulate transmission delay for effect
+            const btn = this.querySelector('.submit-btn');
+            btn.textContent = 'Encrypting...';
+            btn.style.opacity = '0.7';
+            
+            setTimeout(() => {
+                this.style.display = 'none';
+                document.getElementById('formSuccess').classList.add('active');
+            }, 2000);
+        });
+    </script>
+
+</body>
+</html>
